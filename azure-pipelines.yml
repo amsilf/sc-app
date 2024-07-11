@@ -7,6 +7,7 @@ variables:
 
 
 pool:
+  name: sc-assigment
   vmImage: ubuntu-latest
 
 stages:
