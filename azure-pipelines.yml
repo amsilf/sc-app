@@ -60,7 +60,14 @@ stages:
               failOnStderr: true
               workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
             displayName: 'Terraform Plan'
-
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                terraform show -json ${BUILD_BUILDNUMBER}.tfplan > ${BUILD_BUILDNUMBER}-plan.json
+              failOnStderr: true
+              workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
+            displayName: 'Save Terraform plan'
           - task: ArchiveFiles@2
             inputs:
               rootFolderOrFile: '$(Build.SourcesDirectory)'
