@@ -20,7 +20,9 @@ stages:
           - checkout: self
             fetchDepth: 1
           - task: Bash@3
-          
+            inputs:
+              targetType: 'inline'
+              script: 'az upgrade'
           - task: Bash@3
             inputs:
               filePath: './scripts/terraform-download.sh'
