@@ -57,7 +57,7 @@ stages:
               script: |
                 terraform init -backend-config="client_id=$(AZURE_CLIENT_ID)" -backend-config="client_secret=$(AZURE_CLIENT_SECRET)" -backend-config="tenant_id=$(AZURE_TENANT_ID)" -backend-config="storage_account_name=${STORAGE_ACCOUNT_NAME}" -backend-config="container_name=$(CONTAINER_NAME)" -backend-config="key=$(TF_STATE_KEY)" -backend-config="subscription_id=$(SUBSCRIPTION_ID)" -backend-config="resource_group_name=$(RESOURCE_GROUP_NAME)"
               failOnStderr: true
-              workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
+              workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
             displayName: 'Terraform Init'
 
           - task: Bash@3
@@ -66,7 +66,7 @@ stages:
               script: |              
                 terraform plan -input=false -out ${BUILD_BUILDNUMBER}.tfplan
               failOnStderr: true
-              workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
+              workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
             displayName: 'Terraform Plan'
           - task: Bash@3
             inputs:
@@ -74,7 +74,7 @@ stages:
               script: |
                 terraform show -json ${BUILD_BUILDNUMBER}.tfplan > ${BUILD_BUILDNUMBER}-plan.json
               failOnStderr: true
-              workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
+              workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
             displayName: 'Save Terraform plan'
           - checkout: PolicyRepository
             fetchDepth: 1
@@ -82,9 +82,9 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                opa eval -i ${BUILD_BUILDNUMBER}-plan.json -d ../sc-policy-repo/terraform/vm/invalid_port.rego 'data'
+                opa eval -i ${BUILD_BUILDNUMBER}-plan.json -d $(System.DefaultWorkingDirectory)/sc-policy-repo/terraform/vm/invalid_port.rego 'data'
               failOnStderr: true
-              workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
+              workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
             displayName: 'Validate OPA Policies'
           - task: ArchiveFiles@2
             inputs:
