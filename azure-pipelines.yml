@@ -45,7 +45,7 @@ stages:
             displayName: 'Setup the account'
           - task: Bash@3
             inputs:
-              filePath: './scripts/terraform-download.sh'
+              filePath: '$(System.DefaultWorkingDirectory)/scripts/terraform-download.sh'
             displayName: 'Terraform Download'
           - task: OpenPolicyAgentInstaller@0
             inputs:
