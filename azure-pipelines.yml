@@ -10,6 +10,14 @@ pool:
   name: sc-assigment
   vmImage: ubuntu-latest
 
+resources:
+  repositories:
+    - repository: PolicyRepository
+      type: github
+      endpoint: amsilf
+      name: amsilf/sc-policy-repo
+      ref: main
+
 stages:
   - stage: Build
     jobs:
@@ -68,6 +76,16 @@ stages:
               failOnStderr: true
               workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
             displayName: 'Save Terraform plan'
+          - checkout: PolicyRepository
+            fetchDepth: 1
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                opa eval -i ${BUILD_BUILDNUMBER}-plan.json -d ../sc-policy-repo/terraform/vm/invalid_port.rego 'data'
+              failOnStderr: true
+              workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
+            displayName: 'Validate OPA Policies'
           - task: ArchiveFiles@2
             inputs:
               rootFolderOrFile: '$(Build.SourcesDirectory)'
@@ -78,40 +96,40 @@ stages:
               replaceExistingArchive: true
             displayName: 'Create Plan Artifact'
 
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'drop'
-              publishLocation: 'Container'
-            displayName: 'Publish Plan Artifact'
+          # - task: PublishBuildArtifacts@1
+          #   inputs:
+          #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          #     ArtifactName: 'drop'
+          #     publishLocation: 'Container'
+          #   displayName: 'Publish Plan Artifact'
 
-  - stage: Deploy
-    jobs:
-    - deployment: 'DeployToProduction'
-      environment: 'Infrastructure Production'
-      strategy:
-          runOnce:
-            deploy:
-              steps:
-              - checkout: none
+  # - stage: Deploy
+  #   jobs:
+  #   - deployment: 'DeployToProduction'
+  #     environment: 'Infrastructure Production'
+  #     strategy:
+  #         runOnce:
+  #           deploy:
+  #             steps:
+  #             - checkout: none
               
-              - task: DownloadBuildArtifacts@0
-                inputs:
-                  artifactName: 'drop'
-                displayName: 'Download Plan Artifact'
+  #             - task: DownloadBuildArtifacts@0
+  #               inputs:
+  #                 artifactName: 'drop'
+  #               displayName: 'Download Plan Artifact'
 
-              - task: ExtractFiles@1
-                inputs:
-                  archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/drop/$(Build.BuildId).tgz'
-                  destinationFolder: '$(System.DefaultWorkingDirectory)/'
-                  cleanDestinationFolder: false
-                displayName: 'Extract Plan Artifact'
+  #             - task: ExtractFiles@1
+  #               inputs:
+  #                 archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/drop/$(Build.BuildId).tgz'
+  #                 destinationFolder: '$(System.DefaultWorkingDirectory)/'
+  #                 cleanDestinationFolder: false
+  #               displayName: 'Extract Plan Artifact'
 
-              # - task: Bash@3
-              #   inputs:
-              #     targetType: 'inline'
-              #     script: |              
-              #       terraform apply -auto-approve -input=false ${BUILD_BUILDNUMBER}.tfplan
-              #     failOnStderr: true
-              #     workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
-              #   displayName: 'Terraform Apply'
+  #             - task: Bash@3
+  #               inputs:
+  #                 targetType: 'inline'
+  #                 script: |              
+  #                   terraform apply -auto-approve -input=false ${BUILD_BUILDNUMBER}.tfplan
+  #                 failOnStderr: true
+  #                 workingDirectory: "$(System.DefaultWorkingDirectory)/infra-as-code/"
+  #               displayName: 'Terraform Apply'
