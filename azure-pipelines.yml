@@ -34,8 +34,7 @@ stages:
           - task: Bash@3
             inputs:
               targetType: inline
-              script: 'az login'
-              # script: 'az login --service-principal -u "$(AZURE_CLIENT_ID)" -p "$(AZURE_CLIENT_SECRET)" --tenant "$(AZURE_TENANT_ID)"'
+              script: 'az login --service-principal -u "$(AZURE_CLIENT_ID)" -p "$(AZURE_CLIENT_SECRET)" --tenant "$(AZURE_TENANT_ID)"'
             displayName: 'Login into azure account'
           - task: Bash@3
             inputs:
@@ -63,7 +62,7 @@ stages:
             inputs:
               targetType: 'inline'
               script: |              
-                terraform plan -input=false -out ${BUILD_BUILDNUMBER}.tfplan
+                terraform plan -backend-config="client_id=$(AZURE_CLIENT_ID)" -backend-config="client_secret=$(AZURE_CLIENT_SECRET)" -backend-config="tenant_id=$(AZURE_TENANT_ID)" -backend-config="storage_account_name=${STORAGE_ACCOUNT_NAME}" -backend-config="container_name=$(CONTAINER_NAME)" -backend-config="key=$(TF_STATE_KEY)" -backend-config="subscription_id=$(SUBSCRIPTION_ID)" -backend-config="resource_group_name=$(RESOURCE_GROUP_NAME)" -input=false -out ${BUILD_BUILDNUMBER}.tfplan
               failOnStderr: true
               workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
             displayName: 'Terraform Plan'
