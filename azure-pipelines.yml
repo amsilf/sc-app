@@ -7,7 +7,6 @@ variables:
   - group: Terraform
 
 pool:
-  name: sc-assigment
   vmImage: ubuntu-latest
 
 resources:
@@ -23,7 +22,6 @@ stages:
     jobs:
       - job: Build
         pool:
-          name: sc-assigment
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
