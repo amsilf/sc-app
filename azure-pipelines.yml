@@ -34,7 +34,8 @@ stages:
           - task: Bash@3
             inputs:
               targetType: inline
-              script: 'az login --service-principal -u "$(AZURE_CLIENT_ID)" -p "$(AZURE_CLIENT_SECRET)" --tenant "$(AZURE_TENANT_ID)"'
+              script: 'az account get-access-token --subscription "$(SUBSCRIPTION_ID)"'
+              # script: 'az login --service-principal -u "$(AZURE_CLIENT_ID)" -p "$(AZURE_CLIENT_SECRET)" --tenant "$(AZURE_TENANT_ID)"'
             displayName: 'Login into azure account'
           - task: Bash@3
             inputs:
