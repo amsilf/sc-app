@@ -34,8 +34,15 @@ stages:
           - task: Bash@3
             inputs:
               targetType: inline
-              script: 'az login --service-principal -u "$(AZURE_CLIENT_ID)" -p "$(AZURE_CLIENT_SECRET)" --tenant "$(AZURE_TENANT_ID)"'
+              # script: 'az login --service-principal -u "$(AZURE_CLIENT_ID)" -p "$(AZURE_CLIENT_SECRET)" --tenant "$(AZURE_TENANT_ID)"'
+              script: 'az login'
             displayName: 'Login into azure account'
+            env:
+              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+              ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(AZURE_TENANT_ID)
+
           - task: Bash@3
             inputs:
               targetType: inline
@@ -57,6 +64,8 @@ stages:
               failOnStderr: true
               workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
             displayName: 'Terraform Init'
+            env:
+              ARM_USE_MSI: true
           - task: Bash@3
             inputs:
               targetType: 'inline'
@@ -64,6 +73,8 @@ stages:
               failOnStderr: true
               workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
             displayName: 'Terraform Plan'
+            env:
+              ARM_USE_MSI: true  
           - task: Bash@3
             inputs:
               targetType: 'inline'
