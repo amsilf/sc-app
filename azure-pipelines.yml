@@ -65,7 +65,7 @@ stages:
               addSpnToEnvironment: true
               inlineScript: |
                 terraform init -backend-config="client_id=$(AZURE_CLIENT_ID)" -backend-config="client_secret=$(AZURE_CLIENT_SECRET)" -backend-config="tenant_id=$(AZURE_TENANT_ID)" -backend-config="storage_account_name=${STORAGE_ACCOUNT_NAME}" -backend-config="container_name=$(CONTAINER_NAME)" -backend-config="key=$(TF_STATE_KEY)" -backend-config="subscription_id=$(SUBSCRIPTION_ID)" -backend-config="resource_group_name=$(RESOURCE_GROUP_NAME)"
-
+              workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
           - task: Bash@3
             inputs:
               targetType: 'inline'
@@ -81,6 +81,7 @@ stages:
               failOnStderr: true
               workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
             displayName: 'Save Terraform plan'
+
           - checkout: PolicyRepository
             fetchDepth: 1
           - task: Bash@3
