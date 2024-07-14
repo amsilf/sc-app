@@ -62,7 +62,7 @@ stages:
           - task: Bash@3
             inputs:
               targetType: 'inline'
-              script: 'terraform plan -input=false -out ${BUILD_BUILDNUMBER}.tfplan'
+              script: 'terraform plan -input=false -out ${BUILD_BUILDNUMBER}.tfplan -var="client_secret=$(AZURE_CLIENT_SECRET)"'
               failOnStderr: true
               workingDirectory: "$(System.DefaultWorkingDirectory)/sc-app/infra-as-code/"
             displayName: 'Terraform Plan'
