@@ -1,8 +1,17 @@
+var client_secret {
+}
+
 provider "azuread" {
 }
 
 provider "azurerm" {
   features {}
+
+  client_id       = "cae4b1fa-892e-4b0b-a75c-5e67a3887201"
+  client_secret   = var.client_secret
+  tenant_id       = "40b52d0f-1305-48da-b431-1ad4f9aabe5b"
+  subscription_id = "40b52d0f-1305-48da-b431-1ad4f9aabe5b"
+
 }
 
 terraform {
@@ -19,7 +28,7 @@ terraform {
     }
 
   }
-  
+
   backend "azurerm" {
   }
 }

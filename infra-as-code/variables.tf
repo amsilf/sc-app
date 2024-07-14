@@ -8,3 +8,7 @@ variable "prefix" {
   default     = "win-vm-iis"
   description = "Prefix of the resource name"
 }
+
+variable "client_secret" {
+  type        = string
+} 
