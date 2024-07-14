@@ -31,23 +31,21 @@ stages:
               targetType: 'inline'
               script: 'curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash'
             displayName: 'Install Azure CLI'
-          - task: Bash@3
-            inputs:
-              targetType: inline
-              # script: 'az login --service-principal -u "$(AZURE_CLIENT_ID)" -p "$(AZURE_CLIENT_SECRET)" --tenant "$(AZURE_TENANT_ID)"'
-              script: 'az login'
-            displayName: 'Login into azure account'
-            env:
-              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-              ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
-              ARM_TENANT_ID: $(AZURE_TENANT_ID)
-
-          - task: Bash@3
-            inputs:
-              targetType: inline
-              script: 'az account set --subscription ${SUBSCRIPTION_ID}'
-            displayName: 'Setup the account'
+          # - task: Bash@3
+          #   inputs:
+          #     targetType: inline
+          #     script: 'az login --service-principal -u "$(AZURE_CLIENT_ID)" -p "$(AZURE_CLIENT_SECRET)" --tenant "$(AZURE_TENANT_ID)"'
+          #   displayName: 'Login into azure account'
+          #   env:
+          #     ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+          #     ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+          #     ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+          #     ARM_TENANT_ID: $(AZURE_TENANT_ID)
+          # - task: Bash@3
+          #   inputs:
+          #     targetType: inline
+          #     script: 'az account set --subscription ${SUBSCRIPTION_ID}'
+          #   displayName: 'Setup the account'
           - task: Bash@3
             inputs:
               filePath: '$(System.DefaultWorkingDirectory)/sc-app/scripts/terraform-download.sh'
