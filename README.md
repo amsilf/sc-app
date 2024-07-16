@@ -7,14 +7,10 @@ This project demonstrates a simple Terraform configuration to deploy an Nginx "H
 - Terraform (>= 0.12)
 - OPA CLI
 
-## Project Structure
-.
-├── scripts
-├── infra-as-code
-├── azure-pipeline.yml
-└── README.md
 
 ## Quick Start
+
+The OPA rules are located at the sc-policy-repo.
 
 1. Clone this repository:
 git clone https://github.com/yourusername/terraform-nginx-opa.git
@@ -26,7 +22,7 @@ Copy
 3. Review and modify the `variables.tf` file if needed.
 
 4. Run OPA verification:
-opa eval --data policy.rego --input terraform.tfplan "data.terraform.allow"
+opa eval --data policy.rego --input terraform.tfplan "data"
 Copy
 5. If the OPA check passes, apply the Terraform configuration:
 terraform apply
