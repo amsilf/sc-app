@@ -34,4 +34,3 @@ Copy
 
 To destroy the created resources:
 terraform destroy
-Copy
